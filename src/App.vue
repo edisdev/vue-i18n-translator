@@ -1,28 +1,70 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Translator />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Translator from './components/Translator.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    Translator
   }
 }
 </script>
 
 <style>
+body {
+  padding: 0;
+  margin: 0;
+}
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Menlo', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  font-size: 16px;
+}
+
+.CodeMirror {
+  font-family: Menlo, 'Courier New', Courier, monospace !important;
+  font-size: 18px !important;
+  height: 100% !important;
+}
+
+button, input, textarea, label {
+  background-color: rgb(113, 143, 99);
+  border: 0;
+  font-size: 16px;
+  border-radius: 0;
+  padding: 8px 15px;
+  margin: 5px 0;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+input, textarea, label {
+  display: block;
+  background-color: transparent;
+  border-bottom: 1px solid rgb(113, 143, 99);
+  border-radius: 0;
+  color: #000;
+}
+
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  height: 35px;
+  line-height: 24px;
+  min-height: 35px;
+  padding: 5px;
+  background-color: rgba(255, 255, 255, 0.8)
+}
+
+label {
+  border-bottom: 0;
 }
 </style>
