@@ -25,7 +25,7 @@
       </li>
     </ul>
     <section class="editor">
-      <codemirror v-model='editingSource'></codemirror>
+      <codemirror v-model='editingSource' @input='compileEditing'></codemirror>
     </section>
     <section class="actions">
       <button @click='selectedLocale=locale' :key='locale' v-for='locale in parsedLocales' :class="{selected:locale==selectedLocale}" :disabled='locale==selectedLocale'>{{ locale }}</button>
@@ -96,6 +96,47 @@ export default {
             "tr": {
               "world": "dünya"
             }
+          },
+          "src/components/Login.vue": {
+            "en": {
+              "login": {
+                "login": "Simpra'ya Giriş Yap",
+                "email": "E-Posta",
+                "password": "Şifre",
+                "do_login": "Giriş Yap",
+                "reset_password": "Şifreni sıfırla",
+                "forget_password": "Şifreni mı unuttun?",
+                "do_reset_password": "Şifremi sıfırla",
+                "send_password_reset": "Şifre sıfırlama isteği gönder",
+                "password_confirmation": "Şifre Onayı"
+              }
+            },
+            "tr": {
+              "login": {
+                "login": "Simpra'ya Giriş Yap",
+                "email": "E-Posta",
+                "password": "Şifre",
+                "do_login": "Giriş Yap",
+                "reset_password": "Şifreni sıfırla",
+                "forget_password": "Şifreni mı unuttun?",
+                "do_reset_password": "Şifremi sıfırla",
+                "send_password_reset": "Şifre sıfırlama isteği gönder",
+                "password_confirmation": "Şifre Onayı"
+              }
+            },
+            "hu": {
+              "login": {
+                "login": "Simpra'ya Giriş Yap",
+                "email": "E-Posta",
+                "password": "Şifre",
+                "do_login": "Giriş Yap",
+                "reset_password": "Şifreni sıfırla",
+                "forget_password": "Şifreni mı unuttun?",
+                "do_reset_password": "Şifremi sıfırla",
+                "send_password_reset": "Şifre sıfırlama isteği gönder",
+                "password_confirmation": "Şifre Onayı"
+              }
+            }
           }
         }
       `,
@@ -120,12 +161,6 @@ export default {
       handler () {
         this.editingSource = JSON.stringify(unflatten(this.editingParsed, { overwrite: true }), null, 2)
       }
-    },
-    editingSource () {
-      try {
-        this.editingParsed = flatten(JSON.parse(this.editingSource))
-        this.translationsParsed[this.editingFile] = unflatten(this.editingParsed)
-      } catch (e) {}
     }
   },
   computed: {
@@ -164,6 +199,10 @@ export default {
     compile () {
       this.translationsSource = JSON.stringify(this.translationsParsed, null, 2)
     },
+    compileEditing () {
+      this.editingParsed = flatten(JSON.parse(this.editingSource))
+      this.translationsParsed[this.editingFile] = unflatten(this.editingParsed)
+    },
     removeKey (key) {
       const parsed = { ... this.editingParsed }
       delete parsed[key]
@@ -175,7 +214,7 @@ export default {
         return;
       }
       this.parsedLocales.forEach(l => {
-        parsed[`${l}.${this.newKey.key}`] = ''
+        parsed[`${l}.${this.newKey.key}`] = parsed[`${l}.${this.newKey.key}`] || ''
       })
       parsed[`${this.selectedLocale}.${this.newKey.key}`] = this.newKey.value
       this.editingParsed = flatten(parsed)
