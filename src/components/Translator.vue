@@ -29,7 +29,7 @@
     </section>
     <section class="actions">
       <button @click='selectedLocale=locale' :key='locale' v-for='locale in parsedLocales' :class="{selected:locale==selectedLocale}" :disabled='locale==selectedLocale'>{{ locale }}</button>
-      <button class="download" @click='download'>download <b>translations.json</b></button>
+      <button class="download" @click='download'>download <b>translations.edited.json</b></button>
     </section>
     <section class="table">
       <table>
@@ -121,12 +121,10 @@ export default {
         this.editingSource = JSON.stringify(unflatten(this.editingParsed, { overwrite: true }), null, 2)
       }
     },
-    translationsParsed () {
-      console.log(this.translationsParsed)
-    },
     editingSource () {
       try {
         this.editingParsed = flatten(JSON.parse(this.editingSource))
+        this.translationsParsed[this.editingFile] = unflatten(this.editingParsed)
       } catch (e) {}
     }
   },
