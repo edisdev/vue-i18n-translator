@@ -128,12 +128,12 @@ export default {
       if (oldVal) {
         this.translationsParsed = {
           ...this.translationsParsed,
-          [oldVal]: unflatten(this.editingParsed)
+          [oldVal]: unflatten(this.editingParsed, { overwrite: true })
         }
         this.compile()
       }
       this.editingSource = JSON.stringify(this.translationsParsed[this.editingFile], null, 2)
-      this.editingParsed = flatten(JSON.parse(this.editingSource))
+      this.editingParsed = flatten(JSON.parse(this.editingSource), { overwrite: true })
     },
     editingParsed: {
       deep: true,
@@ -144,7 +144,7 @@ export default {
   },
   computed: {
     selectedLocaleEditing () {
-      const keys = unflatten(this.editingParsed)[this.selectedLocale]
+      const keys = unflatten(this.editingParsed, { overwrite: true })[this.selectedLocale]
       return keys ? flatten(keys) : {}
     }
   },
@@ -179,13 +179,13 @@ export default {
       this.translationsSource = JSON.stringify(this.translationsParsed, null, 2)
     },
     compileEditing () {
-      this.editingParsed = flatten(JSON.parse(this.editingSource))
-      this.translationsParsed[this.editingFile] = unflatten(this.editingParsed)
+      this.editingParsed = flatten(JSON.parse(this.editingSource), {overwrite: true})
+      this.translationsParsed[this.editingFile] = unflatten(this.editingParsed, { overwrite: true })
     },
     removeKey (key) {
       const parsed = { ... this.editingParsed }
       delete parsed[key]
-      this.editingParsed = flatten(parsed)
+      this.editingParsed = flatten(parsed, {overwrite: true})
     },
     addNewKey () {
       const parsed = { ... this.editingParsed }
@@ -196,7 +196,7 @@ export default {
         parsed[`${l}.${this.newKey.key}`] = parsed[`${l}.${this.newKey.key}`] || ''
       })
       parsed[`${this.selectedLocale}.${this.newKey.key}`] = this.newKey.value
-      this.editingParsed = flatten(parsed)
+      this.editingParsed = flatten(parsed, { overwrite: true })
       this.newKey = { key: '', value: '' }
     },
     download () {
