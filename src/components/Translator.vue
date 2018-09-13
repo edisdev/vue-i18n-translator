@@ -1,7 +1,7 @@
 <template>
   <div class="translator" @dragover='dragover' :class="{ dragging }">
     <header>
-      <h2>vue-i18n-translator</h2>
+      <h2>Vue i18n Translator</h2>
       <small>
         <code>$ cd your/vue/project</code><br/>
         <code>$ npx vue-i18n-service export > translations.json</code><br/>
@@ -25,7 +25,7 @@
       </li>
     </ul>
     <section class="editor">
-      <codemirror v-model='editingSource' @input='compileEditing'></codemirror>
+      <codemirror v-model='editingSource' @blur='compileEditing'></codemirror>
     </section>
     <section class="actions">
       <button @click='selectedLocale=locale' :key='locale' v-for='locale in parsedLocales' :class="{selected:locale==selectedLocale}" :disabled='locale==selectedLocale'>{{ locale }}</button>
@@ -99,43 +99,22 @@ export default {
           },
           "src/components/Login.vue": {
             "en": {
-              "login": {
-                "login": "Simpra'ya Giriş Yap",
-                "email": "E-Posta",
-                "password": "Şifre",
-                "do_login": "Giriş Yap",
-                "reset_password": "Şifreni sıfırla",
-                "forget_password": "Şifreni mı unuttun?",
-                "do_reset_password": "Şifremi sıfırla",
-                "send_password_reset": "Şifre sıfırlama isteği gönder",
-                "password_confirmation": "Şifre Onayı"
-              }
+              "title": "Login",
+              "email": "Email",
+              "password": "Password",
+              "login": "Log In",
+              "signin": "Sign In",
+              "forget_password": "Forget password?",
+              "reset_password": "Reset password"
             },
             "tr": {
-              "login": {
-                "login": "Simpra'ya Giriş Yap",
-                "email": "E-Posta",
-                "password": "Şifre",
-                "do_login": "Giriş Yap",
-                "reset_password": "Şifreni sıfırla",
-                "forget_password": "Şifreni mı unuttun?",
-                "do_reset_password": "Şifremi sıfırla",
-                "send_password_reset": "Şifre sıfırlama isteği gönder",
-                "password_confirmation": "Şifre Onayı"
-              }
-            },
-            "hu": {
-              "login": {
-                "login": "Simpra'ya Giriş Yap",
-                "email": "E-Posta",
-                "password": "Şifre",
-                "do_login": "Giriş Yap",
-                "reset_password": "Şifreni sıfırla",
-                "forget_password": "Şifreni mı unuttun?",
-                "do_reset_password": "Şifremi sıfırla",
-                "send_password_reset": "Şifre sıfırlama isteği gönder",
-                "password_confirmation": "Şifre Onayı"
-              }
+              "title": "Giriş",
+              "email": "E-posta",
+              "password": "Parola",
+              "login": "Giriş",
+              "signin": "Kayıt Ol",
+              "forget_password": "Parolanı mı unuttun?",
+              "reset_password": "Parolanı sıfırla"
             }
           }
         }
