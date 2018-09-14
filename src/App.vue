@@ -53,6 +53,11 @@ input, textarea, label {
   color: #000;
 }
 
+label.error {
+  color: red;
+  font-weight: bold;
+}
+
 textarea {
   width: 100%;
   box-sizing: border-box;

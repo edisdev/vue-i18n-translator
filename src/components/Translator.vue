@@ -40,16 +40,17 @@
       <table>
         <tr :key='key' v-for='(value, key) in selectedLocaleEditing'>
           <td>
-            <label>{{ key }}</label>
+            <label :class="{error: !value.trim()}">{{ key }}</label>
           </td>
           <td>
             <textarea v-model='editingParsed[`${selectedLocale}.${key}`]'></textarea>
-            <button @click='removeKey(`${selectedLocale}.${key}`)'>remove translation</button>
+            <button @click='removeKey(key)'>remove translation</button>
           </td>
         </tr>
         <tr>
           <td>
-            <input v-model='newKey.key' placeholder='message.deep' />
+            <input v-model='newKey.key' placeholder='translation key' />
+            <small>You can nest translations keys using dots. Eg. `login.welcome`</small>
           </td>
           <td>
             <textarea v-model='newKey.value'></textarea>
@@ -227,7 +228,10 @@ export default {
     },
     removeKey (key) {
       const parsed = { ... this.editingParsed }
-      delete parsed[key]
+      if (!confirm(`all translations with ${key} will be deleted! sure?`)) return;
+      this.parsedLocales.forEach(l => {
+        delete parsed[`${l}.${key}`]
+      })
       this.editingParsed = flatten(parsed, {overwrite: true})
     },
     addNewKey () {
@@ -399,5 +403,11 @@ header {
 .table table td input {
   width: 100%;
   display: block;
+  text-align: right;
+  font-family: Menlo, 'Courier New', Courier, monospace;
+}
+
+.table table td input::placeholder {
+  text-align: right;
 }
 </style>
