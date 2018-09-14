@@ -29,7 +29,10 @@
       <button @click='output="yaml"' :class="{selected:output==='yaml'}">yaml</button>
     </div>
     <section class="editor">
+      <code class="tag" v-if="output==='yaml'">&lt;i18n lang="yaml"&gt;</code>
+      <code class="tag" v-else>&lt;i18n&gt;</code>
       <codemirror v-model='editingSource' @blur='compileEditing' :options='{mode: output === "yaml" ? "text/yaml" : "application/json"}'></codemirror>
+      <code class="tag">&lt;/i18n&gt;</code>
     </section>
     <section class="actions">
       <button @click='selectedLocale=locale' :key='locale' v-for='locale in parsedLocales' :class="{selected:locale==selectedLocale}" :disabled='locale==selectedLocale'>{{ locale }}</button>
@@ -44,7 +47,7 @@
           </td>
           <td>
             <textarea v-model='editingParsed[`${selectedLocale}.${key}`]'></textarea>
-            <button @click='removeKey(key)'>remove translation</button>
+            <button class="remove" @click='removeKey(key)'>&times;</button>
           </td>
         </tr>
         <tr>
@@ -343,6 +346,7 @@ header {
 .files {
   grid-area: files;
   background-color: #252525;
+  overflow-y: auto;
 }
 
 .files a {
@@ -371,6 +375,14 @@ header {
   display: flex;
   flex-direction: column;
   border-top: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+code.tag {
+  font-family: Menlo, 'Courier New', Courier, monospace;
+  font-weight: bold;
+  margin: 5px;
+  opacity: 0.4;
 }
 
 .editor textarea {
@@ -380,6 +392,7 @@ header {
 
 .table {
   grid-area: table;
+  overflow-y: auto;
 }
 
 .table table {
@@ -393,6 +406,27 @@ header {
 .table table td {
   vertical-align: top;
   text-align: right;
+  position: relative;
+}
+
+button.remove {
+  position: absolute;
+  background-color: red;
+  width: 24px;
+  height: 24px;
+  top: 0;
+  right: 0;
+  border-radius: 50%;
+  font-size: 18px !important;
+  line-height: 24px;
+  padding: 0 !important;
+  margin: 0;
+  cursor: pointer;
+  opacity: 0.4;
+}
+
+button.remove:hover {
+  opacity: 1;
 }
 
 .table table td button {
