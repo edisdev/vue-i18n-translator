@@ -131,6 +131,8 @@ export default {
   },
   watch: {
     output () {
+      this.editingSource = this.compiler(unflatten(this.editingParsed, { overwrite: true }), null, 2)
+      this.compileEditing()
       this.rebuildEditor()
     },
     editingFile (_, oldVal) {
