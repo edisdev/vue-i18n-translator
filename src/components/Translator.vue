@@ -25,6 +25,10 @@
       </li>
     </ul>
     <section class="editor">
+      <div class="editor-actions">
+        <button @click='output="json"' :class="{selected:output==='json'}">json</button>
+        <button @click='output="yaml"' :class="{selected:output==='yaml'}">yaml</button>
+      </div>
       <codemirror v-model='editingSource' @blur='compileEditing'></codemirror>
     </section>
     <section class="actions">
@@ -50,6 +54,7 @@
 </template>
 
 <script>
+import YAML from 'js-yaml'
 import { flatten, unflatten } from 'flat'
 
 const saveData = (function () {
@@ -71,6 +76,7 @@ export default {
   name: 'Translator',
   data () {
     return {
+      output: 'json',
       fileFilter: '',
       selectedLocale: '',
       parsedLocales: [],
@@ -124,6 +130,9 @@ export default {
     }
   },
   watch: {
+    output () {
+      this.rebuildEditor()
+    },
     editingFile (_, oldVal) {
       if (oldVal) {
         this.translationsParsed = {
@@ -132,17 +141,22 @@ export default {
         }
         this.compile()
       }
-      this.editingSource = JSON.stringify(this.translationsParsed[this.editingFile], null, 2)
-      this.editingParsed = flatten(JSON.parse(this.editingSource), { overwrite: true })
+      this.rebuildEditor()
     },
     editingParsed: {
       deep: true,
       handler () {
-        this.editingSource = JSON.stringify(unflatten(this.editingParsed, { overwrite: true }), null, 2)
+        this.editingSource = this.compiler(unflatten(this.editingParsed, { overwrite: true }), null, 2)
       }
     }
   },
   computed: {
+    parser () {
+      return this.output === 'yaml' ? YAML.safeLoad : JSON.parse
+    },
+    compiler () {
+      return this.output === 'yaml' ? YAML.safeDump : JSON.stringify
+    },
     selectedLocaleEditing () {
       const keys = unflatten(this.editingParsed, { overwrite: true })[this.selectedLocale]
       return keys ? flatten(keys) : {}
@@ -178,8 +192,12 @@ export default {
     compile () {
       this.translationsSource = JSON.stringify(this.translationsParsed, null, 2)
     },
+    rebuildEditor () {
+      this.editingSource = this.compiler(this.translationsParsed[this.editingFile], null, 2)
+      this.editingParsed = flatten(this.parser(this.editingSource), { overwrite: true })
+    },
     compileEditing () {
-      this.editingParsed = flatten(JSON.parse(this.editingSource), {overwrite: true})
+      this.editingParsed = flatten(this.parser(this.editingSource), {overwrite: true})
       this.translationsParsed[this.editingFile] = unflatten(this.editingParsed, { overwrite: true })
     },
     removeKey (key) {
@@ -197,6 +215,9 @@ export default {
       })
       parsed[`${this.selectedLocale}.${this.newKey.key}`] = this.newKey.value
       this.editingParsed = flatten(parsed, { overwrite: true })
+      this.editingSource = this.compiler(parsed, null, 2)
+      this.compileEditing()
+      this.rebuildEditor()
       this.newKey = { key: '', value: '' }
     },
     download () {
@@ -272,6 +293,11 @@ header {
   border-bottom: 1px solid #ccc;
 }
 
+.editor-actions {
+  display: flex;
+  padding: 0 5px;
+}
+
 .actions button {
   border: 5px solid transparent;
 }
@@ -280,6 +306,7 @@ header {
   margin-left: auto;
 }
 
+.editor-actions button.selected,
 .actions button.selected {
   border: 5px solid rgb(42, 104, 42);
 }
