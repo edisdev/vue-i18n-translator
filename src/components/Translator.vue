@@ -179,6 +179,17 @@ export default {
   created () {
     this.parse()
     this.editingFile = this.files[0]
+    const myjsonID = window.location.hash.replace(/^#/, '').trim()
+    if (myjsonID) {
+      try {
+        const url = `https://api.myjson.com/bins/${myjsonID}`
+        fetch(url)
+          .then(r => r.json())
+          .then(r => this.inputSource(JSON.stringify(r)))
+      } catch (e) {
+        alert(`cannot parse myjson url: ${url}`)
+      }
+    }
   },
   methods: {
     addLocale () {
@@ -204,14 +215,17 @@ export default {
       e.preventDefault()
       const reader = new FileReader()
       reader.onload = () => {
-        this.translationsSource = reader.result
-        setTimeout(() => {
-          this.parse()
-          this.editingFile = this.files[0]
-        }, 100)
+        this.inputSource(reader.result)
         this.dragging = false
       }
       const source = reader.readAsText(e.dataTransfer.files[0])
+    },
+    inputSource (input) {
+      this.translationsSource = input
+      setTimeout(() => {
+        this.parse()
+        this.editingFile = this.files[0]
+      }, 100)
     },
     parse () {
       this.translationsParsed = JSON.parse(this.translationsSource)
