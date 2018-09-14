@@ -24,26 +24,34 @@
         </a>
       </li>
     </ul>
+    <div class="editor-actions">
+      <button @click='output="json"' :class="{selected:output==='json'}">json</button>
+      <button @click='output="yaml"' :class="{selected:output==='yaml'}">yaml</button>
+    </div>
     <section class="editor">
-      <div class="editor-actions">
-        <button @click='output="json"' :class="{selected:output==='json'}">json</button>
-        <button @click='output="yaml"' :class="{selected:output==='yaml'}">yaml</button>
-      </div>
-      <codemirror v-model='editingSource' @blur='compileEditing'></codemirror>
+      <codemirror v-model='editingSource' @blur='compileEditing' :options='{mode: output === "yaml" ? "text/yaml" : "application/json"}'></codemirror>
     </section>
     <section class="actions">
       <button @click='selectedLocale=locale' :key='locale' v-for='locale in parsedLocales' :class="{selected:locale==selectedLocale}" :disabled='locale==selectedLocale'>{{ locale }}</button>
+      <button @click='addLocale'>+</button>
       <button class="download" @click='download'>download <b>translations.edited.json</b></button>
     </section>
     <section class="table">
       <table>
         <tr :key='key' v-for='(value, key) in selectedLocaleEditing'>
-          <td><label>{{ key }}</label></td><td><textarea v-model='editingParsed[`${selectedLocale}.${key}`]'></textarea>
+          <td>
+            <label>{{ key }}</label>
+          </td>
+          <td>
+            <textarea v-model='editingParsed[`${selectedLocale}.${key}`]'></textarea>
             <button @click='removeKey(`${selectedLocale}.${key}`)'>remove translation</button>
           </td>
         </tr>
         <tr>
-          <td><input v-model='newKey.key' placeholder='message.deep' /></td><td>
+          <td>
+            <input v-model='newKey.key' placeholder='message.deep' />
+          </td>
+          <td>
             <textarea v-model='newKey.value'></textarea>
             <button @click='addNewKey'>add new translation</button>
           </td>
@@ -169,6 +177,21 @@ export default {
     this.editingFile = this.files[0]
   },
   methods: {
+    addLocale () {
+      const locale = prompt('locale code (en, tr, gr, etc., values will be copied from selected language)', '').trim()
+      if (!locale || this.parsedLocales.includes(locale)) return;
+      this.parsedLocales.push(locale)
+      const copy = unflatten(this.editingParsed, { overwrite: true })[this.selectedLocale]
+      for (let [file, i18n] of Object.entries(this.translationsParsed)) {
+        this.translationsParsed[file] = {
+          ...i18n,
+          [locale]: i18n[this.selectedLocale]
+        }
+      }
+      this.selectedLocale = locale
+      this.rebuildEditor()
+      this.compile()
+    },
     dragover (e) {
       e.preventDefault()
       this.dragging = true
@@ -254,11 +277,10 @@ h2 + small {
 .translator {
   display: grid;
   grid-template-areas:
-    "header header"
-    "files actions"
-    "files table"
-    "files editor";
-  grid-template-columns: auto 1fr;
+    "header header header"
+    "files actions editor-actions"
+    "files table editor";
+  grid-template-columns: auto 1fr 1fr;
   grid-template-rows: auto auto 1fr;
   height: 100vh;
 }
@@ -296,6 +318,7 @@ header {
 }
 
 .editor-actions {
+  grid-area: editor-actions;
   display: flex;
   padding: 0 5px;
 }

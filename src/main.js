@@ -5,10 +5,17 @@ import App from './App.vue'
 
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/mode/javascript/javascript.js'
-import 'codemirror/theme/monokai.css'
+import 'codemirror/mode/yaml/yaml.js'
+import 'codemirror/theme/ttcn.css'
 
 Vue.use(VueCodemirror, {
-  options: { theme: 'monokai', mode: 'application/json', tabSize: 2, lineWrapping: true },
+  options: {
+    theme: 'ttcn', tabSize: 2, lineWrapping: true,
+    extraKeys: {
+      Tab: (cm) => cm.execCommand('indentMore'),
+      "Shift-Tab": (cm) => cm.execCommand('indentLess'),
+    }
+},
 })
 
 Vue.config.productionTip = false
