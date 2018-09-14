@@ -205,7 +205,10 @@ export default {
       const reader = new FileReader()
       reader.onload = () => {
         this.translationsSource = reader.result
-        this.parse()
+        setTimeout(() => {
+          this.parse()
+          this.editingFile = this.files[0]
+        }, 100)
         this.dragging = false
       }
       const source = reader.readAsText(e.dataTransfer.files[0])
@@ -409,16 +412,24 @@ code.tag {
   position: relative;
 }
 
+.table table td .remove {
+  display: none;
+}
+
+.table table td:hover .remove {
+  display: block;
+}
+
 button.remove {
   position: absolute;
   background-color: red;
-  width: 24px;
-  height: 24px;
-  top: 0;
+  width: 20px;
+  height: 20px;
+  top: 5px;
   right: 0;
   border-radius: 50%;
   font-size: 18px !important;
-  line-height: 24px;
+  line-height: 20px;
   padding: 0 !important;
   margin: 0;
   cursor: pointer;
